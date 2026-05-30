@@ -4,8 +4,13 @@ import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 
+// pdfjs-dist v5 requires Uint8Array — raw ArrayBuffer causes "object cannot be found"
+function toUint8Array(buf) {
+  return buf instanceof Uint8Array ? buf : new Uint8Array(buf)
+}
+
 export async function pdfToImages(arrayBuffer, format = 'png', quality = 0.92, onProgress) {
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+  const pdf = await pdfjsLib.getDocument({ data: toUint8Array(arrayBuffer) }).promise
   const numPages = pdf.numPages
   const blobs = []
   for (let i = 1; i <= numPages; i++) {
@@ -26,11 +31,7 @@ export async function pdfToImages(arrayBuffer, format = 'png', quality = 0.92, o
 
 export async function imagesToPDF(files, pageSize = 'A4') {
   const doc = await PDFDocument.create()
-  const sizes = {
-    A4: [595.28, 841.89],
-    Letter: [612, 792],
-    fit: null,
-  }
+  const sizes = { A4: [595.28, 841.89], Letter: [612, 792], fit: null }
   for (const file of files) {
     const arrayBuffer = await file.arrayBuffer()
     const mime = file.type
@@ -56,30 +57,22 @@ export async function imagesToPDF(files, pageSize = 'A4') {
       image = await doc.embedJpg(jpgArrayBuffer)
     }
     const dims = sizes[pageSize]
-    let pw, ph
-    if (!dims) {
-      pw = image.width
-      ph = image.height
-    } else {
-      pw = dims[0]
-      ph = dims[1]
-    }
+    const pw = dims ? dims[0] : image.width
+    const ph = dims ? dims[1] : image.height
     const page = doc.addPage([pw, ph])
     const scale = Math.min(pw / image.width, ph / image.height)
-    const w = image.width * scale
-    const h = image.height * scale
     page.drawImage(image, {
-      x: (pw - w) / 2,
-      y: (ph - h) / 2,
-      width: w,
-      height: h,
+      x: (pw - image.width * scale) / 2,
+      y: (ph - image.height * scale) / 2,
+      width: image.width * scale,
+      height: image.height * scale,
     })
   }
   return doc.save()
 }
 
 export async function renderPDFPreview(arrayBuffer, pageNum = 1, scale = 1) {
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+  const pdf = await pdfjsLib.getDocument({ data: toUint8Array(arrayBuffer) }).promise
   const page = await pdf.getPage(pageNum)
   const viewport = page.getViewport({ scale })
   const canvas = document.createElement('canvas')
