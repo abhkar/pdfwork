@@ -14,7 +14,7 @@ const tools = [
 const features = [
   { icon: '🔒', title: '100% Private', desc: 'Files never leave your browser. All processing is done locally on your device.' },
   { icon: '⚡', title: 'Lightning Fast', desc: 'No uploads, no waiting. Process PDFs instantly right in your browser.' },
-  { icon: '🆓', title: 'Always Free', desc: 'No subscriptions, no watermarks, no limits. PDFCraft is free forever.' },
+  { icon: '🆓', title: 'Always Free', desc: 'No subscriptions, no watermarks, no limits. PDFBee is free forever.' },
 ]
 
 export default function Home() {

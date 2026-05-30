@@ -78,7 +78,7 @@ export default function Header() {
             fontSize: '18px',
             boxShadow: '0 4px 15px rgba(102,126,234,0.4)',
           }}>
-            📄
+            🐝
           </div>
           <span style={{
             fontSize: '20px',
@@ -89,7 +89,7 @@ export default function Header() {
             backgroundClip: 'text',
             letterSpacing: '-0.5px',
           }}>
-            PDFCraft
+            PDFBee
           </span>
         </Link>
 

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 const getInitialTheme = () => {
-  const stored = localStorage.getItem('pdfcraft-theme')
+  const stored = localStorage.getItem('pdfbee-theme')
   if (stored) return stored
   return 'dark'
 }
@@ -11,7 +11,7 @@ const useAppStore = create((set) => ({
   toggleTheme: () =>
     set((state) => {
       const next = state.theme === 'dark' ? 'light' : 'dark'
-      localStorage.setItem('pdfcraft-theme', next)
+      localStorage.setItem('pdfbee-theme', next)
       return { theme: next }
     }),
 

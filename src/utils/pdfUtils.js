@@ -41,34 +41,49 @@ export async function rotatePDF(arrayBuffer, angleDeg, pageIndices) {
 
 export async function addWatermark(arrayBuffer, text, options = {}) {
   const { fontSize = 48, opacity = 0.15, color = { r: 0.5, g: 0.5, b: 0.5 }, position = 'diagonal' } = options
+
+  // Sanitize text to ASCII-only so HelveticaBold can encode it
+  const safeText = text.replace(/[^\x20-\x7E]/g, '?').trim() || 'WATERMARK'
+
   const doc = await PDFDocument.load(arrayBuffer)
   const font = await doc.embedFont(StandardFonts.HelveticaBold)
   const pageCount = doc.getPageCount()
+
   for (let i = 0; i < pageCount; i++) {
     const page = doc.getPage(i)
     const { width, height } = page.getSize()
-    const textWidth = font.widthOfTextAtSize(text, fontSize)
+    const textWidth = font.widthOfTextAtSize(safeText, fontSize)
+
     let x, y, rotate
+
     if (position === 'diagonal') {
-      x = (width - textWidth * Math.cos(Math.PI / 4)) / 2
-      y = height / 2
+      // Center the midpoint of the rotated text at the page center
+      const angle = Math.PI / 4
+      x = width / 2 - (textWidth / 2) * Math.cos(angle) + (fontSize / 2) * Math.sin(angle)
+      y = height / 2 - (textWidth / 2) * Math.sin(angle) - (fontSize / 2) * Math.cos(angle)
       rotate = degrees(45)
     } else if (position === 'center') {
       x = (width - textWidth) / 2
-      y = height / 2
+      y = height / 2 - fontSize / 2
       rotate = degrees(0)
     } else {
+      // corner
       x = 20
-      y = 20
+      y = height - fontSize - 20
       rotate = degrees(0)
     }
-    page.drawText(text, {
+
+    page.drawText(safeText, {
       x,
       y,
       size: fontSize,
       font,
-      color: rgb(color.r, color.g, color.b),
-      opacity,
+      color: rgb(
+        Math.max(0, Math.min(1, color.r)),
+        Math.max(0, Math.min(1, color.g)),
+        Math.max(0, Math.min(1, color.b)),
+      ),
+      opacity: Math.max(0.01, Math.min(1, opacity)),
       rotate,
     })
   }

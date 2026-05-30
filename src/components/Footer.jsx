@@ -29,7 +29,7 @@ export default function Footer() {
                 justifyContent: 'center',
                 fontSize: '16px',
               }}>
-                📄
+                🐝
               </div>
               <span style={{
                 fontSize: '18px',
@@ -39,7 +39,7 @@ export default function Footer() {
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
               }}>
-                PDFCraft
+                PDFBee
               </span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6 }}>
@@ -111,7 +111,7 @@ export default function Footer() {
           gap: '12px',
         }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-            © {new Date().getFullYear()} PDFCraft. Free forever. No account required.
+            © {new Date().getFullYear()} PDFBee. Free forever. No account required.
           </p>
           <div style={{ display: 'flex', gap: '16px' }}>
             {['🔒 Secure', '⚡ Fast', '🆓 Free'].map(tag => (
