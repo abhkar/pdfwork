@@ -1,10 +1,8 @@
 import * as pdfjsLib from 'pdfjs-dist'
 import { PDFDocument } from 'pdf-lib'
+import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).href
+pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
 
 export async function pdfToImages(arrayBuffer, format = 'png', quality = 0.92, onProgress) {
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise

@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import useAppStore from './store/useAppStore'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home'))
 const MergePDF = lazy(() => import('./pages/MergePDF'))
@@ -48,19 +49,31 @@ export default function App() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header />
       <main style={{ flex: 1 }}>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/merge" element={<MergePDF />} />
-            <Route path="/split" element={<SplitPDF />} />
-            <Route path="/compress" element={<CompressPDF />} />
-            <Route path="/pdf-to-image" element={<PDFToImage />} />
-            <Route path="/image-to-pdf" element={<ImageToPDF />} />
-            <Route path="/rotate" element={<RotatePDF />} />
-            <Route path="/watermark" element={<Watermark />} />
-            <Route path="/protect" element={<ProtectPDF />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/merge" element={<MergePDF />} />
+              <Route path="/split" element={<SplitPDF />} />
+              <Route path="/compress" element={<CompressPDF />} />
+              <Route path="/pdf-to-image" element={<PDFToImage />} />
+              <Route path="/image-to-pdf" element={<ImageToPDF />} />
+              <Route path="/rotate" element={<RotatePDF />} />
+              <Route path="/watermark" element={<Watermark />} />
+              <Route path="/protect" element={<ProtectPDF />} />
+              <Route path="*" element={
+                <div style={{ padding: '80px 24px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '64px', marginBottom: '16px' }}>🐝</div>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '12px' }}>Page not found</h2>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '28px' }}>The page you're looking for doesn't exist.</p>
+                  <Link to="/" className="btn-primary" style={{ textDecoration: 'none', padding: '12px 28px', borderRadius: '12px', background: 'linear-gradient(135deg,#667eea,#764ba2)', color: 'white', fontWeight: 600 }}>
+                    Back to Home
+                  </Link>
+                </div>
+              } />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
     </div>

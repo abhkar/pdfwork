@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from 'zustand/react'
 
 const getInitialTheme = () => {
   const stored = localStorage.getItem('pdfbee-theme')
